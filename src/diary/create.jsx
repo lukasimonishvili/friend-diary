@@ -35,6 +35,33 @@ const Backgrounds = styled.div`
   align-items: center;
   flex-direction: column;
 
+  &::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: #f5f5f5;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+    background-color: #f5f5f5;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #aaa;
+    border-radius: 10px;
+    background-image: -webkit-linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.2) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgba(0, 0, 0, 0.2) 50%,
+      rgba(0, 0, 0, 0.2) 75%,
+      transparent 75%,
+      transparent
+    );
+  }
+
   @media screen and (max-width: 600px) {
     max-height: 34px;
     margin-bottom: 10px;
@@ -73,6 +100,33 @@ const Stickers = styled.div`
   height: 100%;
   margin-left: 5px;
   overflow-y: auto;
+
+  &::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: #f5f5f5;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar {
+    height: 5px;
+    width: 5px;
+    background-color: #f5f5f5;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #aaa;
+    border-radius: 10px;
+    background-image: -webkit-linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.2) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgba(0, 0, 0, 0.2) 50%,
+      rgba(0, 0, 0, 0.2) 75%,
+      transparent 75%,
+      transparent
+    );
+  }
 
   @media screen and (max-width: 600px) {
     width: 100%;
@@ -260,9 +314,11 @@ const CreateDiary = () => {
     }
   }
 
-  function removeFromCanvas(id, e) {
+  function removeFromCanvas(i, e) {
     e.preventDefault();
-    setActiveStickers(activeStickers.filter(sticker => sticker.id !== id));
+    let arr = [...activeStickers];
+    arr.splice(i, 1);
+    setActiveStickers(arr);
   }
 
   function handleMouseMove(e) {
@@ -379,8 +435,8 @@ const CreateDiary = () => {
         </Backgrounds>
         <CanvasWrapper>
           <Canvas
-            id="canvas"
             background={activeColor}
+            id="canvas"
             onMouseMove={e => {
               handleMouseMove(e);
             }}
@@ -418,7 +474,7 @@ const CreateDiary = () => {
                 />
                 <Delete
                   onClick={e => {
-                    removeFromCanvas(activeSticker.id, e);
+                    removeFromCanvas(index, e);
                   }}
                   alt=""
                   src={deleteIcon}

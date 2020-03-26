@@ -6,6 +6,7 @@ import AuthGard from "./shared/authGuard";
 import Profile from "./profile/Profile";
 import CreateDiary from "./diary/create";
 import QuestionsCreate from "./diary/createQuestions";
+import Share from "./diary/share";
 
 // function serUser() {
 //   window.localStorage.setItem(
@@ -41,6 +42,7 @@ function App() {
         cofirmed={() => <QuestionsCreate />}
         rejected="/"
       />
+      <Share path="share/:id" />
     </Router>
   );
 }
