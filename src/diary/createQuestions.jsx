@@ -448,7 +448,8 @@ const QuestionsCreate = () => {
       })
     };
 
-    payload = { ...payload, questions: pQuestions };
+    payload = { ...payload, questions: pQuestions, texture: noteType };
+    window.localStorage.setItem("payload", JSON.stringify(payload));
     window.location.replace("/share/23231123322333");
   }
 

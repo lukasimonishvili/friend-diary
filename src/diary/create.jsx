@@ -13,13 +13,18 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   background-color: #e8e8e8;
+
+  @media screen and (max-height: 828px) {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
 `;
 
 const Wrapper = styled.div`
   display: flex;
   align-items: flex-start;
   max-height: 828px;
-  height: 100vh;
+  height: 100%;
 
   @media screen and (max-width: 600px) {
     width: 100%;
