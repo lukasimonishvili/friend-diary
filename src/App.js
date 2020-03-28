@@ -6,10 +6,11 @@ import AuthGard from "./shared/authGuard";
 import Profile from "./profile/Profile";
 import CreateDiary from "./diary/create";
 import QuestionsCreate from "./diary/createQuestions";
-import Share from "./diary/share";
 import Fill from "./diary/fill";
 import FillQuestions from "./diary/fillQuestions";
 import Complete from "./diary/complete";
+import Diary from "./profile/Diary";
+import Read from "./diary/read";
 
 // function serUser() {
 //   window.localStorage.setItem(
@@ -45,9 +46,10 @@ function App() {
         cofirmed={() => <QuestionsCreate />}
         rejected="/"
       />
-      <Share path="share/:id" />
       <Fill path="fill/:id" />
       <FillQuestions path="fill/questions/:id" />
+      <Diary path="diary/:id" />
+      <Read path="read" />
       <Complete path="complete" />
     </Router>
   );

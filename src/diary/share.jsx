@@ -33,14 +33,13 @@ const Note = styled.div`
   height: 100%;
   padding-top: 78px;
   border-radius: 17px;
-  /* position: relative; */
   background-color: #f1f7fb;
   padding-left: 69px;
   padding-right: 30px;
   overflow-y: auto;
 
   &::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     background-color: #f5f5f5;
     border-radius: 10px;
   }
@@ -249,7 +248,7 @@ const Invite = styled.button`
   }
 `;
 
-const Button = styled(Link)`
+const Button = styled.div`
   text-align: center;
   color: #126dbc;
   font-size: 21px;
@@ -281,7 +280,7 @@ const ButtonWrapper = styled.div`
   justify-content: flex-end;
 `;
 
-const Share = () => {
+const Share = props => {
   const [horizontalLenght, setHorizontalLength] = useState({
     top: 0,
     count: 0
@@ -304,6 +303,10 @@ const Share = () => {
     }
   }
 
+  function onBackClick() {
+    props.back();
+  }
+
   useEffect(() => {
     calculateHorizontalLineLength();
     setFriednList([
@@ -320,7 +323,7 @@ const Share = () => {
     };
   }, []);
 
-  let href = window.location.href.split("share/");
+  let href = window.location.href;
 
   function copyText(e) {
     e.persist();
@@ -346,12 +349,14 @@ const Share = () => {
           <div style={{ position: "relative", zIndex: 2 }}>
             <Title>moiwvie megobrebi</Title>
             <Label>დღიურის ბმული (click to copy)</Label>
-            <LinkLong onClick={copyText}>
-              {href[0] + "diary/" + href[1]}
-            </LinkLong>
+            <LinkLong onClick={copyText}>{href}</LinkLong>
             <Label>გაუგზავნე დღიური</Label>
             <Socials>
-              <Social href="http://www.facebook.com" target="_blank">
+              <div
+                style={{ fontFamily: "'Lato' !important" }}
+                className="sharethis-inline-share-buttons"
+              ></div>
+              {/* <Social href="http://www.facebook.com" target="_blank">
                 <img alt="" src={fb} />
               </Social>
               <Social href="http://www.instagram.com" target="_blank">
@@ -362,7 +367,7 @@ const Share = () => {
               </Social>
               <Social href="https://www.messenger.com" target="_blank">
                 <img alt="" src={msg} />
-              </Social>
+              </Social> */}
             </Socials>
             <Friends>
               {firendList.map(friend => (
@@ -373,7 +378,7 @@ const Share = () => {
               ))}
             </Friends>
             <ButtonWrapper>
-              <Button to="/profile">dRiuris naxva</Button>
+              <Button onClick={onBackClick}>dRiuris naxva</Button>
             </ButtonWrapper>
           </div>
           <RedLine />

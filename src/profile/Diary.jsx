@@ -1,9 +1,12 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import styled from "styled-components";
 import shortid from "shortid";
 import { Link } from "@reach/router";
 
 import Loading from "../shared/spinner";
+import Share from "../diary/share";
+
+import btn from "../assets/img/button.svg";
 
 const Container = styled.div`
   width: 100%;
@@ -119,20 +122,11 @@ const Title = styled.h2`
   padding-right: 24px;
 `;
 
-const LoadWrapper = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-`;
-
-const Diary = styled(Link)`
+const Filler = styled.div`
   font-size: 25px;
   color: #126dbc;
   display: block;
   margin-bottom: 25px;
-  position: relative;
-  z-index: 20;
 
   & span {
     padding-right: 35px;
@@ -143,6 +137,26 @@ const Diary = styled(Link)`
   }
 `;
 
+const FillerWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 20;
+`;
+
+const Read = styled(Link)`
+  font-size: 18px;
+  line-height: 25px;
+  color: #126dbc;
+  padding: 0 15px;
+  background-image: url(${btn});
+  background-size: 100% 100%;
+  background-position: center;
+  margin-bottom: 25px;
+  cursor: pointer;
+`;
+
 const ButtonWrapper = styled.div`
   width: 100%;
   display: flex;
@@ -151,10 +165,9 @@ const ButtonWrapper = styled.div`
   margin-bottom: 25px;
 `;
 
-const Button = styled(Link)`
-  font-size: 25px;
-  margin-bottom: 25px;
-  padding: 27px 0;
+const Button = styled.div`
+  font-size: 13px;
+  padding: 22px 0;
   cursor: pointer;
   color: #126dbc;
   background-image: url(/static/media/button.1ecc2f97.svg);
@@ -164,15 +177,16 @@ const Button = styled(Link)`
   z-index: 20;
 `;
 
-const LogedIn = () => {
+const Diary = props => {
   let ref = useRef();
 
   const [horizontalLenght, setHorizontalLength] = useState({
     top: 0,
     count: 0
   });
-  const [loading, setLoading] = useState(true);
+  const [showShare, setShowShare] = useState(props.share || false);
   const [list, setList] = useState([]);
+  let savedIndex = -1;
 
   function calculateHorizontalLineLength() {
     if (ref.current) {
@@ -188,23 +202,45 @@ const LogedIn = () => {
     }
   }
 
-  function getDiaryList() {
-    let arr = [
-      { id: "123321", title: "pirveli dRiuri" },
-      { id: "12344321", title: "meore dRiuri" }
-    ];
+  function toggleShareView() {
+    let curren = showShare;
+    setShowShare(!curren);
 
-    if (arr.length) {
-      setList(arr);
-      setLoading(false);
-      calculateHorizontalLineLength();
-    } else {
-      window.location.replace("/create");
-    }
+    calculateHorizontalLineLength();
+  }
+
+  function handleMouseOver(data) {
+    window.localStorage.setItem("answer", JSON.stringify(data));
   }
 
   useEffect(() => {
-    getDiaryList();
+    calculateHorizontalLineLength();
+    setList([
+      {
+        name: "luka simoniSvili",
+        list: [
+          { question: "ra aris Seni gen gegma?", answers: "araferi brat" },
+          {
+            question: "araspravedlivi xeli ra pontSi aiwia?",
+            answers: "vozdux obSi brat"
+          }
+        ]
+      },
+      {
+        name: "vaJa orosani",
+        list: [
+          { question: "ori zangi Ramea?", answers: "Sav ferze nu Radaob brat" },
+          { question: "kai biWiba Tu torti?", answers: "CurCxela" }
+        ]
+      },
+      {
+        name: "kote marabdiSvili",
+        list: [
+          { question: "1-2 Cayra ar gaqvs Zma?", answers: "aafeTqe" },
+          { question: "ra mieci?", answers: "kudi" }
+        ]
+      }
+    ]);
 
     window.addEventListener("resize", calculateHorizontalLineLength);
 
@@ -213,28 +249,30 @@ const LogedIn = () => {
     };
   }, []);
 
-  return (
+  return showShare ? (
+    <Share back={toggleShareView} />
+  ) : (
     <Container>
       <NoteWrapper>
-        <Note ref={ref} id="test">
-          {loading && !list.length ? (
-            <LoadWrapper>
-              <Loading />
-            </LoadWrapper>
-          ) : (
-            <>
-              <Title>Cemi dRiurebi</Title>
-              {list.map((diary, index) => (
-                <Diary to={"/diary/" + diary.id} key={shortid.generate()}>
-                  <span>{index + 1}</span>
-                  {diary.title}
-                </Diary>
-              ))}
-              <ButtonWrapper>
-                <Button to="/create">daamate axali</Button>
-              </ButtonWrapper>
-            </>
-          )}
+        <Note ref={ref}>
+          <Title>Cemi dRiuri</Title>
+          {list.map((filler, index) => (
+            <FillerWrapper
+              onMouseOver={() => {
+                handleMouseOver(filler.list);
+              }}
+              key={shortid.generate()}
+            >
+              <Filler>
+                <span>{index + 1}</span>
+                {filler.name}
+              </Filler>
+              <Read to="/read">naxva</Read>
+            </FillerWrapper>
+          ))}
+          <ButtonWrapper>
+            <Button onClick={toggleShareView}>gauzuare megobrebs</Button>
+          </ButtonWrapper>
           <RedLine />
           {[...Array(horizontalLenght.count)].map((e, i) => {
             return (
@@ -250,4 +288,4 @@ const LogedIn = () => {
   );
 };
 
-export default LogedIn;
+export default Diary;

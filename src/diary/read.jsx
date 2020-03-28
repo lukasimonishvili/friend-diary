@@ -1,9 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import styled from "styled-components";
 import shortid from "shortid";
 import { Link } from "@reach/router";
-
-import Loading from "../shared/spinner";
 
 const Container = styled.div`
   width: 100%;
@@ -108,41 +106,6 @@ const RedLine = styled.div`
   }
 `;
 
-const Title = styled.h2`
-  text-align: end;
-  width: 100%;
-  font-size: 24px;
-  line-height: 40px;
-  color: #126dbc;
-  margin-top: -50px;
-  margin-bottom: 48px;
-  padding-right: 24px;
-`;
-
-const LoadWrapper = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-`;
-
-const Diary = styled(Link)`
-  font-size: 25px;
-  color: #126dbc;
-  display: block;
-  margin-bottom: 25px;
-  position: relative;
-  z-index: 20;
-
-  & span {
-    padding-right: 35px;
-
-    @media screen and (max-width: 727px) {
-      padding-right: 15px;
-    }
-  }
-`;
-
 const ButtonWrapper = styled.div`
   width: 100%;
   display: flex;
@@ -154,25 +117,53 @@ const ButtonWrapper = styled.div`
 const Button = styled(Link)`
   font-size: 25px;
   margin-bottom: 25px;
-  padding: 27px 0;
   cursor: pointer;
   color: #126dbc;
   background-image: url(/static/media/button.1ecc2f97.svg);
-  background-size: cover;
+  background-size: 100% 100%;
   background-position: center;
   position: relative;
   z-index: 20;
 `;
 
-const LogedIn = () => {
+const Question = styled.p`
+  font-size: 25px;
+  margin-bottom: 25px;
+  color: #126dbc;
+
+  &:first-child {
+    margin-top: 10px;
+  }
+
+  & span {
+    padding-right: 35px;
+
+    @media screen and (max-width: 727px) {
+      padding-right: 15px;
+    }
+  }
+`;
+
+const Answer = styled.p`
+  color: #126dbc;
+  font-size: 25px;
+  margin-bottom: 25px;
+  padding-left: 35px;
+
+  @media screen and (max-width: 727px) {
+    padding-left: 15px;
+  }
+`;
+
+const Read = () => {
   let ref = useRef();
 
   const [horizontalLenght, setHorizontalLength] = useState({
     top: 0,
     count: 0
   });
-  const [loading, setLoading] = useState(true);
-  const [list, setList] = useState([]);
+
+  const [data, setData] = useState([]);
 
   function calculateHorizontalLineLength() {
     if (ref.current) {
@@ -187,54 +178,31 @@ const LogedIn = () => {
       });
     }
   }
-
-  function getDiaryList() {
-    let arr = [
-      { id: "123321", title: "pirveli dRiuri" },
-      { id: "12344321", title: "meore dRiuri" }
-    ];
-
-    if (arr.length) {
-      setList(arr);
-      setLoading(false);
-      calculateHorizontalLineLength();
-    } else {
-      window.location.replace("/create");
-    }
-  }
-
   useEffect(() => {
-    getDiaryList();
-
+    calculateHorizontalLineLength();
+    setData(JSON.parse(window.localStorage.getItem("answer")));
     window.addEventListener("resize", calculateHorizontalLineLength);
 
     return () => {
       window.removeEventListener("resize", calculateHorizontalLineLength);
     };
   }, []);
-
   return (
     <Container>
       <NoteWrapper>
-        <Note ref={ref} id="test">
-          {loading && !list.length ? (
-            <LoadWrapper>
-              <Loading />
-            </LoadWrapper>
-          ) : (
-            <>
-              <Title>Cemi dRiurebi</Title>
-              {list.map((diary, index) => (
-                <Diary to={"/diary/" + diary.id} key={shortid.generate()}>
-                  <span>{index + 1}</span>
-                  {diary.title}
-                </Diary>
-              ))}
-              <ButtonWrapper>
-                <Button to="/create">daamate axali</Button>
-              </ButtonWrapper>
-            </>
-          )}
+        <Note ref={ref}>
+          {data.map((answ, index) => (
+            <React.Fragment key={shortid.generate()}>
+              <Question>
+                <span>{index + 1}</span>
+                {answ.question}
+              </Question>
+              <Answer>{answ.answers}</Answer>
+            </React.Fragment>
+          ))}
+          <ButtonWrapper>
+            <Button to="../">ukan</Button>
+          </ButtonWrapper>
           <RedLine />
           {[...Array(horizontalLenght.count)].map((e, i) => {
             return (
@@ -250,4 +218,4 @@ const LogedIn = () => {
   );
 };
 
-export default LogedIn;
+export default Read;

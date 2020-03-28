@@ -19,4 +19,24 @@
   font-family: "Calligraphy" !important;
 }
 
+.sharethis-inline-share-buttons {
+  font-family: "Lato" !important;
+}
+
+.sharethis-inline-share-buttons * {
+  font-family: "Lato" !important;
+}
+
+.st-btns * {
+  font-family: "Lato" !important;
+}
+
+.st-logo {
+  display: none !important;
+}
+
+.st-disclaimer {
+  display: none !important;
+}
+
 @import "./assets/css/reset.css";

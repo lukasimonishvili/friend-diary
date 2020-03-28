@@ -82,6 +82,7 @@ const Fill = props => {
       window.localStorage.setItem("payload", JSON.stringify(payload));
     }, 1500);
   }, []);
+  
   return (
     <Container>
       {loading && !data ? (
