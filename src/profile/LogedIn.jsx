@@ -222,7 +222,7 @@ const LogedIn = () => {
               <Loading />
             </LoadWrapper>
           ) : (
-            <>
+            <React.Fragment>
               <Title>Cemi dRiurebi</Title>
               {list.map((diary, index) => (
                 <Diary to={"/diary/" + diary.id} key={shortid.generate()}>
@@ -233,7 +233,7 @@ const LogedIn = () => {
               <ButtonWrapper>
                 <Button to="/create">daamate axali</Button>
               </ButtonWrapper>
-            </>
+            </React.Fragment>
           )}
           <RedLine />
           {[...Array(horizontalLenght.count)].map((e, i) => {

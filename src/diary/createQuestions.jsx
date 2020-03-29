@@ -774,7 +774,7 @@ const QuestionsCreate = () => {
               );
             })
           ) : (
-            <></>
+            <React.Fragment></React.Fragment>
           )}
         </Note>
       </NoteWrapper>
