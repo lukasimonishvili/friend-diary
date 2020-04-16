@@ -4,6 +4,7 @@
     url("./assets/fonts/Calligraphy.woff") format("woff");
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -12,15 +13,27 @@
     url("./assets/fonts/Lato-Black.woff") format("woff");
   font-weight: 900;
   font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "MG Niniko";
+  src: url("./assets/fonts/MGNiniko.woff2") format("woff2"),
+    url("./assets/fonts/MGNiniko.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }
 
 * {
   box-sizing: border-box;
-  font-family: "Calligraphy" !important;
+  font-family: "Calligraphy", "MG Niniko" !important;
 }
 
 .sharethis-inline-share-buttons {
   font-family: "Lato" !important;
+  position: relative;
+  z-index: 200;
 }
 
 .sharethis-inline-share-buttons * {

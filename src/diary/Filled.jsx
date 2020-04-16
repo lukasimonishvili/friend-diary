@@ -4,8 +4,6 @@ import shortid from "shortid";
 import { Link } from "@reach/router";
 import Div100vh from "react-div-100vh";
 
-import { FormattedMessage } from "react-intl";
-
 import btn from "../assets/img/button.svg";
 import bodyImage from "../assets/img/body.jpg";
 
@@ -122,20 +120,14 @@ const Button = styled(Link)`
   transform: translateX(-50%);
   background-color: transparent;
   background-image: url(${btn});
-  background-size: cover;
+  background-size: 100% 100%;
   background-repeat: no-repeat;
   color: #126dbc;
-  font-size: 17px;
-  padding: 21px 0;
+  font-size: 21px;
   z-index: 30;
-
-  @media screen and (max-width: 415px) {
-    font-size: 12px;
-    padding: 24px 0;
-  }
 `;
 
-const Complete = () => {
+const Filled = () => {
   const ref = useRef();
 
   function calculateHorizontalLineLength() {
@@ -172,12 +164,8 @@ const Complete = () => {
     <Container>
       <Wrapper>
         <Note ref={ref}>
-          <Title>
-            <FormattedMessage id="sent" />
-          </Title>
-          <Button to="/">
-            <FormattedMessage id="createYours" />
-          </Button>
+          <Title>es dRiuri ukve Sevsebuli gaqvT</Title>
+          <Button to="/">ukan</Button>
           <RedLine />
           {[...Array(horizontalLenght.count)].map((e, i) => {
             return (
@@ -193,4 +181,4 @@ const Complete = () => {
   );
 };
 
-export default Complete;
+export default Filled;

@@ -2,16 +2,23 @@ import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import shortid from "shortid";
 import { Link } from "@reach/router";
+import Div100vh from "react-div-100vh";
+import { FormattedMessage } from "react-intl";
 
 import Loading from "../shared/spinner";
+import bodyImage from "../assets/img/body.jpg";
 
-const Container = styled.div`
+import axios from "axios";
+
+const Container = styled(Div100vh)`
   width: 100%;
-  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #e8e8e8;
+  background-image: url(${bodyImage});
+  background-size: cover;
+  background-position: top right;
 
   @media screen and (max-width: 727px) {
     padding-left: 30px;
@@ -33,6 +40,10 @@ const Note = styled.div`
   padding-left: 40px;
   padding-right: 30px;
   overflow-y: auto;
+
+  @supports (-webkit-touch-callout: none) {
+    overflow-y: scroll;
+  }
 
   &::-webkit-scrollbar-track {
     box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
@@ -74,6 +85,8 @@ const NoteWrapper = styled.div`
   height: 828px;
   overflow: hidden;
   position: relative;
+  border-radius: 17px;
+  box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.3);
 
   @media screen and (max-width: 727px) {
     width: 100%;
@@ -87,7 +100,7 @@ const NoteWrapper = styled.div`
 const Horizontal = styled.div`
   position: absolute;
   z-index: 1;
-  top: ${props => props.top};
+  top: ${(props) => props.top};
   left: 0;
   width: 100%;
   height: 2px;
@@ -132,7 +145,7 @@ const Diary = styled(Link)`
   display: block;
   margin-bottom: 25px;
   position: relative;
-  z-index: 20;
+  z-index: 200000;
 
   & span {
     padding-right: 35px;
@@ -154,7 +167,7 @@ const ButtonWrapper = styled.div`
 const Button = styled(Link)`
   font-size: 25px;
   margin-bottom: 25px;
-  padding: 27px 0;
+  padding: 14px 0;
   cursor: pointer;
   color: #126dbc;
   background-image: url(/static/media/button.1ecc2f97.svg);
@@ -169,7 +182,7 @@ const LogedIn = () => {
 
   const [horizontalLenght, setHorizontalLength] = useState({
     top: 0,
-    count: 0
+    count: 0,
   });
   const [loading, setLoading] = useState(true);
   const [list, setList] = useState([]);
@@ -183,29 +196,35 @@ const LogedIn = () => {
       result = Math.floor(height / 25);
       setHorizontalLength({
         top: padding,
-        count: result
+        count: result,
       });
     }
   }
 
   function getDiaryList() {
-    let arr = [
-      { id: "123321", title: "pirveli dRiuri" },
-      { id: "12344321", title: "meore dRiuri" }
-    ];
-
-    if (arr.length) {
-      setList(arr);
-      setLoading(false);
-      calculateHorizontalLineLength();
-    } else {
-      window.location.replace("/create");
-    }
+    let userId = window.localStorage.getItem("user");
+    axios
+      .get("https://megobrebi.ge/api/getDiaryList/?id=" + userId)
+      .then((response) => {
+        let arr = response.data.data;
+        if (response.data.success == false) {
+          window.localStorage.clear();
+          window.location.reload();
+        }
+        if (arr.length) {
+          setList(arr);
+          setLoading(false);
+        } else {
+          window.location.replace("/create");
+        }
+      });
   }
 
   useEffect(() => {
+    setTimeout(() => {
+      calculateHorizontalLineLength();
+    }, 1000);
     getDiaryList();
-
     window.addEventListener("resize", calculateHorizontalLineLength);
 
     return () => {
@@ -223,15 +242,22 @@ const LogedIn = () => {
             </LoadWrapper>
           ) : (
             <React.Fragment>
-              <Title>Cemi dRiurebi</Title>
+              <Title>
+                <FormattedMessage id="myDiarys" />
+              </Title>
               {list.map((diary, index) => (
-                <Diary to={"/diary/" + diary.id} key={shortid.generate()}>
+                <Diary
+                  to={"/diary/" + diary.diary_hash}
+                  key={shortid.generate()}
+                >
                   <span>{index + 1}</span>
                   {diary.title}
                 </Diary>
               ))}
               <ButtonWrapper>
-                <Button to="/create">daamate axali</Button>
+                <Button to="/create">
+                  <FormattedMessage id="add" />
+                </Button>
               </ButtonWrapper>
             </React.Fragment>
           )}

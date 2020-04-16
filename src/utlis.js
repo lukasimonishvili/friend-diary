@@ -1,4 +1,4 @@
-export const redirect = direction => {
+export const redirect = (direction) => {
   console.log("rejected");
   if (direction === "back") {
     window.history.back();

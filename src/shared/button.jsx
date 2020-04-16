@@ -22,6 +22,7 @@ const StyledButton = styled.button`
   background-repeat: no-repeat;
   background-position: center;
   cursor: pointer;
+  user-select: none;
 `;
 
 const StyledLink = styled(Link)`
@@ -39,9 +40,10 @@ const StyledLink = styled(Link)`
   background-repeat: no-repeat;
   background-position: center;
   cursor: pointer;
+  user-select: none;
 `;
 
-const Button = props => {
+const Button = (props) => {
   return props.link ? (
     <StyledLink to={props.link}>{props.text}</StyledLink>
   ) : (

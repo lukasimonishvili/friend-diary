@@ -1,0 +1,30 @@
+import { LOCALES } from "../locales.js";
+
+export default {
+  [LOCALES.RUSSIAN]: {
+    unlogined: "дневник друзей",
+    start: "Начать",
+    myDiarys: "мой дневникы",
+    myDiary: "мой дневник",
+    see: "посмотреть",
+    add: "добавить",
+    empty: "этот дневник никто не заполнял :(",
+    sendToFriend: "отправить к друзьям",
+    back: "назад",
+    send: "отправить",
+    sent: "ответы отправлен другу",
+    createYours: "создать свой дневник",
+    filled: "этот дневник уже заполнен",
+    placeholder: "выбрать имя",
+    color: "цвета",
+    choose: "вибирай",
+    texture: "текстуры",
+    chooseQuestions: "выбери вопросы",
+    editQuestions: "обновить вопросы",
+    custom: "новый вопрос",
+    create: "создать",
+    save: "сохранить",
+    search: "искать...",
+    more: "увидеть больше...",
+  },
+};

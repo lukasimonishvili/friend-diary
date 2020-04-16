@@ -1,0 +1,30 @@
+import { LOCALES } from "../locales.js";
+
+export default {
+  [LOCALES.ENGLISH]: {
+    unlogined: "Diary of friendship",
+    start: "Start",
+    myDiarys: "My diarys",
+    myDiary: "My diary",
+    see: "view",
+    add: "Add new",
+    empty: "This diary is not filled yet :(",
+    sendToFriend: "Send to friends",
+    back: "Back",
+    send: "Send",
+    sent: "Questions sent to friend",
+    createYours: "Create your diary",
+    filled: "This diary is already filled",
+    placeholder: "Choose name",
+    color: "Color",
+    choose: "Select",
+    texture: "Texture",
+    chooseQuestions: "Choose questions",
+    editQuestions: "Edit questions",
+    custom: "New question",
+    create: "Create",
+    save: "Save",
+    search: "Search...",
+    more: "See more...",
+  },
+};

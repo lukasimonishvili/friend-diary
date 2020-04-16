@@ -2,14 +2,19 @@ import React, { useRef, useState, useEffect } from "react";
 import styled from "styled-components";
 import shortid from "shortid";
 import { Link } from "@reach/router";
+import Div100vh from "react-div-100vh";
 
-const Container = styled.div`
+import bodyImage from "../assets/img/body.jpg";
+
+const Container = styled(Div100vh)`
   width: 100%;
-  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #e8e8e8;
+  background-image: url(${bodyImage});
+  background-size: cover;
+  background-position: top right;
 
   @media screen and (max-width: 727px) {
     padding-left: 30px;
@@ -72,6 +77,8 @@ const NoteWrapper = styled.div`
   height: 828px;
   overflow: hidden;
   position: relative;
+  border-radius: 17px;
+  box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.3);
 
   @media screen and (max-width: 727px) {
     width: 100%;
@@ -85,7 +92,7 @@ const NoteWrapper = styled.div`
 const Horizontal = styled.div`
   position: absolute;
   z-index: 1;
-  top: ${props => props.top};
+  top: ${(props) => props.top};
   left: 0;
   width: 100%;
   height: 2px;
@@ -128,8 +135,10 @@ const Button = styled(Link)`
 
 const Question = styled.p`
   font-size: 25px;
-  margin-bottom: 25px;
+  margin-bottom: 30px;
   color: #126dbc;
+  z-index: 50;
+  position: relative;
 
   &:first-child {
     margin-top: 10px;
@@ -146,9 +155,11 @@ const Question = styled.p`
 
 const Answer = styled.p`
   color: #126dbc;
-  font-size: 25px;
+  font-size: 20px;
   margin-bottom: 25px;
   padding-left: 35px;
+  z-index: 50;
+  position: relative;
 
   @media screen and (max-width: 727px) {
     padding-left: 15px;
@@ -160,7 +171,7 @@ const Read = () => {
 
   const [horizontalLenght, setHorizontalLength] = useState({
     top: 0,
-    count: 0
+    count: 0,
   });
 
   const [data, setData] = useState([]);
@@ -174,12 +185,14 @@ const Read = () => {
       result = Math.floor(height / 25);
       setHorizontalLength({
         top: padding,
-        count: result
+        count: result,
       });
     }
   }
   useEffect(() => {
-    calculateHorizontalLineLength();
+    setTimeout(() => {
+      calculateHorizontalLineLength();
+    }, 1000);
     setData(JSON.parse(window.localStorage.getItem("answer")));
     window.addEventListener("resize", calculateHorizontalLineLength);
 
@@ -197,7 +210,7 @@ const Read = () => {
                 <span>{index + 1}</span>
                 {answ.question}
               </Question>
-              <Answer>{answ.answers}</Answer>
+              <Answer>{answ.answer}</Answer>
             </React.Fragment>
           ))}
           <ButtonWrapper>

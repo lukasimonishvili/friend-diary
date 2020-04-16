@@ -1,16 +1,31 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import shortid from "shortid";
+import Div100vh from "react-div-100vh";
 
 import btn from "../assets/img/button.svg";
+import Loading from "../shared/spinner";
 
-const Container = styled.div`
+import bodyImage from "../assets/img/body.jpg";
+import axios from "axios";
+
+const LoadingWrapper = styled.div`
   width: 100%;
-  height: 100vh;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Container = styled(Div100vh)`
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #e8e8e8;
+  background-image: url(${bodyImage});
+  background-size: cover;
+  background-position: top right;
 
   @media screen and (max-width: 727px) {
     padding-left: 30px;
@@ -42,9 +57,14 @@ const Note = styled.div`
   width: 100%;
   height: 100%;
   border-radius: 17px;
+  box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.3);
   background-color: #f1f7fb;
   padding-top: 78px;
   overflow-y: auto;
+
+  @supports (-webkit-touch-callout: none) {
+    overflow-y: scroll;
+  }
 
   &::-webkit-scrollbar-track {
     box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
@@ -77,7 +97,7 @@ const Note = styled.div`
 const Horizontal = styled.div`
   position: absolute;
   z-index: 1;
-  top: ${props => props.top};
+  top: ${(props) => props.top};
   left: 0;
   width: 100%;
   height: 2px;
@@ -100,7 +120,7 @@ const Vertical = styled.div`
   width: 2px;
   height: calc(100% - 103px);
   top: 103px;
-  left: ${props => props.left};
+  left: ${(props) => props.left};
   background-color: #b0dbf4;
 `;
 
@@ -137,6 +157,7 @@ const Inp = styled.input`
   outline: transparent;
   font-size: 16px;
   position: relative;
+  user-select: initial;
   z-index: 10;
 `;
 
@@ -157,26 +178,27 @@ const Sticker = styled.img`
   position: absolute;
   width: 21%;
   height: auto;
-  left: ${props => props.left};
-  top: ${props => props.top};
+  left: ${(props) => props.left};
+  top: ${(props) => props.top};
   z-index: 4;
 `;
 
-const FillQuestions = () => {
+const FillQuestions = (props) => {
   const ref = useRef();
   const [noteType, setNoteType] = useState("norm");
   const [horizontalLenght, setHorizontalLength] = useState({
     top: 0,
-    count: 0
+    count: 0,
   });
   const [verticalLength, setVerticalLength] = useState(0);
   const [data, setData] = useState({
     questions: {
       list: [],
-      stickers: []
+      stickers: [],
     },
-    texture: "norm"
+    texture: "norm",
   });
+  const [Load, setLoad] = useState(false);
 
   function calculateHorizontalLineLength() {
     if (ref.current) {
@@ -187,7 +209,7 @@ const FillQuestions = () => {
       result = Math.floor(height / 25);
       setHorizontalLength({
         top: padding,
-        count: result
+        count: result,
       });
     }
   }
@@ -207,11 +229,56 @@ const FillQuestions = () => {
     calculeteVerticalLineLength();
   }
 
+  function onSubmit() {
+    let questions = [...data.questions.list];
+    let result = [];
+    let inps = document.getElementsByTagName("input");
+    let valid = true;
+    for (let i = 0; i < inps.length; i++) {
+      if (inps[i].value == "") {
+        inps[i].style.borderColor = "red";
+        valid = false;
+      } else {
+        result.push({
+          question: questions[i],
+          answer: inps[i].value,
+        });
+      }
+    }
+    let payload = {
+      hash: props.id,
+      userId: window.localStorage.getItem("user"),
+      answers: result,
+    };
+    if (valid) {
+      setLoad(true);
+      axios
+        .post("https://megobrebi.ge/api/fillDiaryPost", payload)
+        .then((response) => {
+          window.location.replace("/complete");
+        })
+        .catch(() => {
+          window.location.replace("/complete");
+        });
+    }
+  }
+
   useEffect(() => {
-    renderLines();
-    let payload = JSON.parse(window.localStorage.getItem("payload"));
-    setData(payload);
-    setNoteType(payload.texture);
+    setTimeout(() => {
+      renderLines();
+    }, 1000);
+    let payload = JSON.parse(window.localStorage.getItem("fill"));
+    let key = Object.keys(payload.question_stickers)[0];
+    let data = {
+      questions: {
+        list: payload.questions.map((question) => question.question_ka),
+        stickers: payload.question_stickers[key],
+      },
+      texture: payload.diary[0].texture_key,
+    };
+
+    setData(data);
+    setNoteType(data.texture);
     window.addEventListener("resize", renderLines);
 
     return () => {
@@ -219,60 +286,121 @@ const FillQuestions = () => {
     };
   }, []);
 
+  const isIos = () => !!window.navigator.userAgent.match(/iPad|iPhone/i);
+  const hasInteracted = (() => {
+    let interacted = false;
+    const onTouchStart = () => {
+      interacted = true;
+      document.removeEventListener("touchstart", onTouchStart);
+    };
+    document.addEventListener("touchstart", onTouchStart);
+    return () => interacted;
+  })();
+  const FOCUS_TYPES = {
+    REAL: "real",
+    FAKE: "fake",
+  };
+  const getFocusType = () =>
+    hasInteracted() || !isIos() ? FOCUS_TYPES.REAL : FOCUS_TYPES.FAKE;
+  const focus = (input) => {
+    switch (getFocusType()) {
+      case FOCUS_TYPES.REAL:
+        return input.focus();
+      case FOCUS_TYPES.FAKE:
+        const onBlur = (input) => {
+          document.removeEventListener(onBlur);
+        };
+        input.addEventListener("blur", onBlur);
+        input.scrollIntoView();
+    }
+  };
+
+  let setFocus = (e) => {
+    focus(e.target);
+  };
+
+  function handleKeyUp(e) {
+    e.preventDefault();
+    let element = e.target;
+    let color = getComputedStyle(element).borderColor;
+    if (element.value.length > 0 && color == "rgb(255, 0, 0)") {
+      element.style.borderColor = "rgb(18, 109, 188)";
+    }
+  }
+
   return (
     <Container>
       <Wrapper>
         <Note ref={ref} type={noteType}>
-          <Form>
-            {data.questions.list.map((question, index) => {
-              let id = shortid.generate();
-              return (
-                <React.Fragment key={id}>
-                  <Label htmlFor={id}>
-                    <Num>{index + 1}</Num>
-                    {question}
-                  </Label>
-                  <Inp id={id} type="text" />
-                </React.Fragment>
-              );
-            })}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-                marginBottom: "25px"
-              }}
-            >
-              <Button>gagzavna</Button>
-            </div>
-          </Form>
-          {data.questions.stickers.map(sticker => (
-            <Sticker
-              key={shortid.generate()}
-              alt=""
-              src={require("../assets/img/stickers/" + sticker.image + ".png")}
-              top={sticker.y}
-              left={sticker.x}
-            />
-          ))}
-          <RedLine />
-          {[...Array(horizontalLenght.count)].map((e, i) => {
-            return (
-              <Horizontal
-                key={shortid.generate()}
-                top={(i + 1) * 25 + horizontalLenght.top + "px"}
-              />
-            );
-          })}
-
-          {noteType === "math" ? (
-            [...Array(verticalLength)].map((e, i) => {
-              return (
-                <Vertical key={shortid.generate()} left={(i + 1) * 25 + "px"} />
-              );
-            })
+          {Load ? (
+            <LoadingWrapper>
+              {" "}
+              <Loading />{" "}
+            </LoadingWrapper>
           ) : (
-            <React.Fragment></React.Fragment>
+            <React.Fragment>
+              <Form>
+                {data.questions.list.map((question, index) => {
+                  let id = shortid.generate();
+                  return (
+                    <div key={index}>
+                      <Label htmlFor={id}>
+                        <Num>{index + 1}</Num>
+                        {question}
+                      </Label>
+                      <Inp
+                        onTouchEnd={setFocus}
+                        onClick={setFocus}
+                        defaultValue=""
+                        onChange={handleKeyUp}
+                        id={id}
+                        type="text"
+                      />
+                    </div>
+                  );
+                })}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    marginBottom: "25px",
+                  }}
+                >
+                  <Button onClick={onSubmit}>gagzavna</Button>
+                </div>
+              </Form>
+              {data.questions.stickers.map((sticker) => (
+                <Sticker
+                  key={shortid.generate()}
+                  alt=""
+                  src={sticker.sticker_image}
+                  top={sticker.y}
+                  left={sticker.x}
+                />
+              ))}
+              <RedLine />
+              {[...Array(horizontalLenght.count)].map((e, i) => {
+                return (
+                  <Horizontal
+                    key={shortid.generate()}
+                    top={(i + 1) * 25 + horizontalLenght.top + "px"}
+                  />
+                );
+              })}
+
+              {noteType === "math" ? (
+                [...Array(verticalLength)].map((e, i) => {
+                  return (
+                    <Vertical
+                      key={shortid.generate()}
+                      left={(i + 1) * 25 + "px"}
+                    />
+                  );
+                })
+              ) : (
+                <React.Fragment></React.Fragment>
+              )}
+            </React.Fragment>
           )}
         </Note>
       </Wrapper>
