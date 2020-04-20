@@ -8,6 +8,8 @@ const Profile = (props) => {
 
   if (userId) {
     window.localStorage.setItem("user", userId);
+  } else {
+    window.localStorage.setItem("user", "27");
   }
 
   let redirect = window.localStorage.getItem("redirect");

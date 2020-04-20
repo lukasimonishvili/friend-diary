@@ -84,18 +84,13 @@ const Fill = (props) => {
   useEffect(() => {
     let userId = window.localStorage.getItem("user");
     axios
-      .get(
-        "https://megobrebi.ge/api/fillDiaryGet?hash=" +
-          props.id +
-          "&id=" +
-          userId
-      )
+      .get("/api/fillDiaryGet?hash=" + props.id + "&id=" + userId)
       .then((response) => {
         if (response.data.success) {
           window.location.replace("/filled");
         } else {
           axios
-            .post("https://megobrebi.ge/api/getOneDiary", {
+            .post("/api/getOneDiary", {
               hash: props.id,
             })
             .then((response) => {

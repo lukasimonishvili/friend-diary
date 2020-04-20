@@ -623,7 +623,7 @@ const QuestionsCreate = (props) => {
         };
 
         axios
-          .post("https://megobrebi.ge/api/updateDiaryQuestion", editPayload)
+          .post("/api/updateDiaryQuestion", editPayload)
           .then((response) => {
             window.location.replace("/diary/" + props.edit.hash);
           })
@@ -632,27 +632,25 @@ const QuestionsCreate = (props) => {
           });
       } else {
         payload = { ...payload, texture_key: noteType, questions: pQuestions };
-        axios
-          .post("https://megobrebi.ge/api/new/dairy", payload)
-          .then((response) => {
-            window.localStorage.removeItem("stickers");
-            window.localStorage.removeItem("payload");
-            setLoad(true);
-            axios
-              .get("https://megobrebi.ge/api/getDiaryList/?id=" + payload.id)
-              .then((listResponse) => {
-                let list = listResponse.data.data;
-                let lastHash = list[list.length - 1].diary_hash;
-                if (lastHash) {
-                  window.location.replace("/diary/" + lastHash);
-                } else {
-                  window.location.replace("/");
-                }
-              })
-              .catch(() => {
+        axios.post("/api/new/dairy", payload).then((response) => {
+          window.localStorage.removeItem("stickers");
+          window.localStorage.removeItem("payload");
+          setLoad(true);
+          axios
+            .get("/api/getDiaryList/?id=" + payload.id)
+            .then((listResponse) => {
+              let list = listResponse.data.data;
+              let lastHash = list[list.length - 1].diary_hash;
+              if (lastHash) {
+                window.location.replace("/diary/" + lastHash);
+              } else {
                 window.location.replace("/");
-              });
-          });
+              }
+            })
+            .catch(() => {
+              window.location.replace("/");
+            });
+        });
       }
     }
   }
@@ -793,8 +791,8 @@ const QuestionsCreate = (props) => {
   }
 
   function getDefaultQuestions() {
-    let questionsRquest = axios.get("https://megobrebi.ge/api/questions");
-    let stickerRequest = axios.get("https://megobrebi.ge/api/stickers");
+    let questionsRquest = axios.get("/api/questions");
+    let stickerRequest = axios.get("/api/stickers");
     let localStikcers = JSON.parse(window.localStorage.getItem("stickers"));
     let requests = [questionsRquest];
 
@@ -888,7 +886,7 @@ const QuestionsCreate = (props) => {
 
   function onSearch(e) {
     if (e.target.value == "") {
-      axios.get("https://megobrebi.ge/api/stickers").then((response) => {
+      axios.get("/api/stickers").then((response) => {
         setStickers(response.data);
       });
     }
@@ -896,11 +894,9 @@ const QuestionsCreate = (props) => {
     let query = e.target.value.replace(/\s/g, "-");
 
     if (e.target.value.length == 1 || e.target.value.length % 3 == 0) {
-      axios
-        .get(`https://megobrebi.ge/api/search/stickerName?name=${query}`)
-        .then((response) => {
-          setStickers(response.data);
-        });
+      axios.get(`/api/search/stickerName?name=${query}`).then((response) => {
+        setStickers(response.data);
+      });
     }
   }
 
@@ -909,8 +905,8 @@ const QuestionsCreate = (props) => {
     let localStikcers = JSON.parse(window.localStorage.getItem("stickers"));
     let requests = [];
     let activeRequest = [];
-    let stickerRequest = axios.get("https://megobrebi.ge/api/stickers");
-    let diaryRequest = axios.post("https://megobrebi.ge/api/getOneDiary", {
+    let stickerRequest = axios.get("/api/stickers");
+    let diaryRequest = axios.post("/api/getOneDiary", {
       hash: props.edit.hash,
     });
 
@@ -1196,12 +1192,9 @@ const QuestionsCreate = (props) => {
                               setSuggestions([]);
                             }
                             axios
-                              .post(
-                                "https://megobrebi.ge/api/Search/Question",
-                                {
-                                  question: keyWord,
-                                }
-                              )
+                              .post("/api/Search/Question", {
+                                question: keyWord,
+                              })
                               .then((response) => {
                                 console.log(response);
                               });

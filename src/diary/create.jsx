@@ -358,12 +358,12 @@ const CreateDiary = (props) => {
   let touchMoved = false;
 
   function getData() {
-    let colorRequest = axios.get("https://megobrebi.ge/api/colors");
-    let stikcerRequest = axios.get("https://megobrebi.ge/api/stickers");
+    let colorRequest = axios.get("/api/colors");
+    let stikcerRequest = axios.get("/api/stickers");
     let requests = [colorRequest, stikcerRequest];
 
     if (props.edit) {
-      let diaryRequest = axios.post("https://megobrebi.ge/api/getOneDiary", {
+      let diaryRequest = axios.post("/api/getOneDiary", {
         hash: props.edit.hash,
       });
       requests.push(diaryRequest);
@@ -441,11 +441,9 @@ const CreateDiary = (props) => {
       payload.id = props.edit.userId;
       payload.hash = props.edit.hash;
 
-      axios
-        .post("https://megobrebi.ge/api/updateDiaryCover", payload)
-        .then((response) => {
-          window.location.replace(`/edit/questions/${props.edit.hash}`);
-        });
+      axios.post("/api/updateDiaryCover", payload).then((response) => {
+        window.location.replace(`/edit/questions/${props.edit.hash}`);
+      });
     }
   }
 
@@ -722,7 +720,7 @@ const CreateDiary = (props) => {
   function onSearch(e) {
     let payload = { ...data };
     if (e.target.value == "") {
-      axios.get("https://megobrebi.ge/api/stickers").then((response) => {
+      axios.get("/api/stickers").then((response) => {
         payload.stickers = response.data;
         setData(payload);
       });
@@ -731,12 +729,10 @@ const CreateDiary = (props) => {
     let query = e.target.value.replace(/\s/g, "-");
 
     if (e.target.value.length == 1 || e.target.value.length % 3 == 0) {
-      axios
-        .get(`https://megobrebi.ge/api/search/stickerName?name=${query}`)
-        .then((response) => {
-          payload.stickers = response.data;
-          setData(payload);
-        });
+      axios.get(`/api/search/stickerName?name=${query}`).then((response) => {
+        payload.stickers = response.data;
+        setData(payload);
+      });
     }
   }
 

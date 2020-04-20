@@ -253,7 +253,7 @@ const FillQuestions = (props) => {
     if (valid) {
       setLoad(true);
       axios
-        .post("https://megobrebi.ge/api/fillDiaryPost", payload)
+        .post("/api/fillDiaryPost", payload)
         .then((response) => {
           window.location.replace("/complete");
         })

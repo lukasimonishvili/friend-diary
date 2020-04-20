@@ -203,21 +203,19 @@ const LogedIn = () => {
 
   function getDiaryList() {
     let userId = window.localStorage.getItem("user");
-    axios
-      .get("https://megobrebi.ge/api/getDiaryList/?id=" + userId)
-      .then((response) => {
-        let arr = response.data.data;
-        if (response.data.success == false) {
-          window.localStorage.clear();
-          window.location.reload();
-        }
-        if (arr.length) {
-          setList(arr);
-          setLoading(false);
-        } else {
-          window.location.replace("/create");
-        }
-      });
+    axios.get("/api/getDiaryList/?id=" + userId).then((response) => {
+      let arr = response.data.data;
+      if (response.data.success == false) {
+        window.localStorage.clear();
+        window.location.reload();
+      }
+      if (arr.length) {
+        setList(arr);
+        setLoading(false);
+      } else {
+        window.location.replace("/create");
+      }
+    });
   }
 
   useEffect(() => {

@@ -329,16 +329,11 @@ const Diary = (props) => {
   useEffect(() => {
     if (userId) {
       axios
-        .get(
-          "https://megobrebi.ge/api/DiaryUserChecker?hash=" +
-            props.id +
-            "&id=" +
-            userId
-        )
+        .get("/api/DiaryUserChecker?hash=" + props.id + "&id=" + userId)
         .then((response) => {
           if (response.data == true) {
             axios
-              .post("https://megobrebi.ge/api/getDiaryAnswers", {
+              .post("/api/getDiaryAnswers", {
                 hash: props.id,
                 id: userId,
               })
